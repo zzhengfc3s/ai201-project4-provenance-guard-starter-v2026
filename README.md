@@ -39,7 +39,12 @@
 <!-- The path a submission takes, from arriving to the label a reader sees.
      Six or seven steps — this is the trace you wrote in Milestone 1. -->
 
-
+1. Receives text and creator_id from /submit endpoint
+2. Sends text to detector.model_signal, adds model_score from this signal call
+3. Sends text to stylometry.style_signal, add style_score from this signal call
+4. Sends both score to scoring.combine_signals, add confidence value from combined score
+5. Sends combined score to scoring.score_to_label, add guess and label from combined score
+6. Sends all of the information above to audit.log_decision, adds nothing, logs the submission
 
 ---
 
@@ -55,17 +60,29 @@
 
 **What it measures:**
 
+This measures how predictable the words used are.
+
 **Why that might differ between human and AI writing:**
 
+AI models uses probability to pick the next word so the text it writes are likely to be predictable where a human can use odd choices, go off on a tangent, use slangs.
+
 **What it can't see:**
+
+It can't see humans writers that write predictable words such as a foreigner/ESL using easier common words and strict semantics/grammar.
 
 ### Signal two — the style signal
 
 **What it measures:**
 
+This measures sentence length spread, unique word ratio, and punctuation density.
+
 **Why that might differ between human and AI writing:**
 
+AI models tend to write uniform, common repeating words choice where a human are less consistent on sentence length and punctuation, and using more unique/odd word choices due to pop culture or learning enivornments.
+
 **What it can't see:**
+
+It can't see edge cases/noises in each of these 3 metrics because it lacks context. I.E long research papers can have more repeating words.
 
 ### The combining rule
 
