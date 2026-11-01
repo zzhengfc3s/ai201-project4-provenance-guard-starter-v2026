@@ -44,61 +44,51 @@ Two things worth knowing before you pick numbers:
 ---
 ## 1.
 
-<!-- Your criterion. It must name a number. -->
-
-
+Given 10 human written text submission, at most 2 submission can be falsely labelled AI.
 
 **Why this target:**
 
-
+8/10, 80% accurately is a very fair and robust accuracy target without being too strict and overly aggressive.
 
 ---
 
 ## 2.
 
-<!-- Your criterion. -->
-
-
+The combine score difference between AI and human have a gap of at least 0.30.
 
 **Why this target:**
 
-
+Splitting 3 labels gives us 33%, rounding it down to 30% gap between AI/human sounds fair baseline difference.
 
 ---
 
 ## 3.
 
-<!-- Your criterion. -->
-
-
+All three labels: AI, Human, Unsure, must be reachable at least once.
 
 **Why this target:**
 
-
+At least once for each label to ensure that all labels can be reached otherwise there could be coverage gap in the scoring.
 
 ---
 
 ## 4.
 
-<!-- Your criterion. -->
-
-
+All appeal must be 100% recorded.
 
 **Why this target:**
 
-
+There should be no reason any appeal is not recorded. This is a deterministric path check.
 
 ---
 
 ## 5.
 
-<!-- Your criterion. -->
-
-
+A bad input, such as missing text or creator_id, should 100% return an error response.
 
 **Why this target:**
 
-
+Another deterministric path check, is text is missing, the scorers can not score anything.
 
 ---
 

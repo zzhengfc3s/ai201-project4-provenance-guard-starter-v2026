@@ -177,8 +177,27 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 **Moment 1**
 
 - *What I asked for:*
+
+My system allows this rate of wrongly flagging human writing as AI-generated, 2/10. Write the message a real writer would send me if they were one of the people that rate allows. Don't tell me whether my number is right.
+
 - *What came back:*
+
+Subject: Quick note on the flag
+
+Hi,
+
+I saw that my draft came back flagged as AI-generated. I wrote it myself, start to finish, over a couple of evenings last week. I can send you the Google Doc with its version history so you can see the drafts building up, along with my notes and the two earlier outlines I scrapped.
+
+I know detectors aren’t perfect, and I’d guess some of the flagged passages are just the ones where I was trying to be clear and direct. I tend to write in short, tidy sentences, and that seems to be what trips these tools.
+
+If it would help, I’m happy to talk through any section with you, explain why I made particular choices, or rewrite a paragraph live. I’d like to get this sorted out, so just tell me what you need from me.
+
+Thanks for taking a look,
+Dana
+
 - *What I changed:*
+
+Nothing.
 
 **Moment 2**
 
