@@ -31,7 +31,7 @@ from flask import Flask, jsonify, request
 import audit
 import config
 from detector import model_signal
-from scoring import combine_signals
+from scoring import combine_signals, score_to_label
 from stylometry import style_signal
 
 app = Flask(__name__)
@@ -210,8 +210,7 @@ def submit():
     model_score = model_signal(text)
     style_score = style_signal(text)
     combined_score = combine_signals(model_score, style_score)
-    guess = "ai"
-    label = "likely_ai"
+    guess, label = score_to_label(combined_score)
 
     audit.log_decision(
         content_id=content_id,
@@ -256,12 +255,31 @@ def appeal():
     """
     payload = request.get_json(silent=True) or {}
 
-    # TODO: delete this and build the route.
+    content_id = payload.get("content_id")
+    reasoning = payload.get("reasoning")
+
+    existing_entries = audit.entries_for(content_id)
+    if not existing_entries:
+        return jsonify({
+            "error": "not_found",
+            "message": f"content_id {content_id} not found in audit log.",
+            "you_sent": payload,
+        }), 404
+
+    creator_id = existing_entries[0].get("creator_id", "unknown")
+
+    appeal_entry = audit.log_appeal(
+        content_id=content_id,
+        creator_id=creator_id,
+        reasoning=reasoning,
+    )
+    
     return jsonify({
-        "error": "not_implemented",
-        "message": "POST /appeal isn't built yet — see the TODO in app.py.",
-        "you_sent": payload,
-    }), 501
+        "ok": True,
+        "content_id": content_id,
+        "status": "under_review",
+        "message": "Your appeal has been recorded and is under review."
+    })
 
 
 # ── Already works ─────────────────────────────────────────────────────────────

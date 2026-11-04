@@ -122,16 +122,16 @@ Style AI Score: 0.20
 
 | Label | Score range | The exact text a reader sees |
 |---|---|---|
-| high-confidence human |  |  |
-| unsure |  |  |
-| high-confidence AI |  |  |
+| high-confidence human | 0 - 0.35 | This text has writing patterns common to AI-generated models. |
+| unsure | 0.35 - 0.65 | This text has mixed writing patterns and/or style common with AI-generated models and naturally written by a person. |
+| high-confidence AI | 0.65 - 1 | This text has distinct writing patterns written by a person. |
 
 **Why I worded the "unsure" one this way:**
 <!-- It's the hardest of the three. It has to admit uncertainty without
      sounding like an accusation, because the person reading it may well have
      written every word themselves. -->
 
-
+Simple and focus on the system not being able to make a determination.
 
 ---
 
@@ -211,8 +211,41 @@ Nothing.
 **Moment 2**
 
 - *What I asked for:*
+
+Here are three labels a website might show on something I wrote. For each one, tell me what I would think it is saying about me and what I would do next. Answer as the writer, not as an engineer. Don't rewrite the labels.
+
+1. This text was likely written by an AI model.
+2. This text was likely written by a person.
+3. The system cannot determine whether this text is written by AI model or a person.
+
 - *What came back:*
+
+**1. "This text was likely written by an AI model."**
+
+You'd read this as an accusation, even though the word "likely" is in there. Your first reaction is probably a flash of defensiveness or embarrassment: *I wrote this. Does it sound robotic? What did I do wrong?* If you really did write it yourself, it feels like being called a liar by a machine that can't see you work. If you did use AI, you might feel caught, or wonder whether it's a problem.
+
+What you do next depends on the stakes. If a teacher, editor, or client is going to see that label, you'd probably start gathering proof: version history, drafts, notes. You might also start rewriting to sound "more human," which usually means roughening your own style until the label goes away. Some people would just stop trusting the tool, or stop using the site.
+
+**2. "This text was likely written by a person."**
+
+You'd take this as a pass, and maybe a small compliment. There's relief if you were worried about being flagged, and mild satisfaction if you worked hard on the writing. You'd probably do nothing more with it. You'd keep going, submit it, or post it.
+
+Two other reactions are possible. If you did use AI and got this label anyway, you might feel like you got away with something, and you'd start to wonder how much the label can be trusted. Or if you're a careful writer, you might wonder what the label is based on and whether it would hold up if challenged. "Likely" also leaves you slightly unsure whether it counts as a verdict.
+
+**3. "The system cannot determine whether this text is written by AI model or a person."**
+
+This is the most frustrating one. It doesn't clear you and it doesn't accuse you, so it doesn't help you at all. You'd probably think: *So what am I supposed to do with that?* You might feel a little suspicious, like being waved through security with a shrug, because anyone looking at it could take it either way.
+
+Your next step is unclear, and that's the problem. Some people would shrug and move on. Others would worry the ambiguity will be read against them, since a reader who sees "can't determine" may assume the worst. You might edit the text to try to tip it toward "person," or you might wonder whether your writing is just plain or generic. Many people would also decide the tool is useless, since it didn't tell them anything they could act on.
+
+**What the three share:** the writer's reaction is mostly about *what happens to them next*, not about the text itself. Labels 1 and 3 especially leave you without a way to respond, whether that's disputing the result, understanding it, or fixing anything. That's why people tend to respond by guessing at the system's rules instead of just writing normally.
+
 - *What I changed:*
+
+New labels:
+AI: This text has writing patterns common to AI-generated models.
+Human: This text has distinct writing patterns written by a person.
+Unsure: This text has mixed writing patterns and/or style common with AI-generated models and naturally written by a person.
 
 <!-- ═══════════════════════ UNIT 8 — THE TEST ═══════════════════════ -->
 
