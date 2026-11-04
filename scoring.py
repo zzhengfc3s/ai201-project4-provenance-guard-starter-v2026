@@ -52,10 +52,17 @@ def combine_signals(model_score: float, style_score: float) -> float:
     The weights in config.py are placeholders. Change them, or ignore them and
     write a different rule.
     """
-    # TODO: replace this
+
+    model_weight = config.WEIGHT_MODEL_SIGNAL
+    style_weight = config.WEIGHT_STYLE_SIGNAL
+
+    if (model_score - style_score) > 0.3:
+        model_weight = 0.8
+        style_weight = 0.2
+
     return (
-        config.WEIGHT_MODEL_SIGNAL * model_score
-        + config.WEIGHT_STYLE_SIGNAL * style_score
+        model_weight * model_score
+        + style_weight * style_score
     )
 
 

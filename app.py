@@ -31,6 +31,8 @@ from flask import Flask, jsonify, request
 import audit
 import config
 from detector import model_signal
+from scoring import combine_signals
+from stylometry import style_signal
 
 app = Flask(__name__)
 
@@ -206,8 +208,8 @@ def submit():
     text = payload.get("text")
     creator_id = payload.get("creator_id")
     model_score = model_signal(text)
-    style_score = 0.65
-    combined_score = 0.73
+    style_score = style_signal(text)
+    combined_score = combine_signals(model_score, style_score)
     guess = "ai"
     label = "likely_ai"
 

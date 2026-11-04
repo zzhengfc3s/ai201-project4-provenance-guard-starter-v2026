@@ -91,7 +91,12 @@ It can't see edge cases/noises in each of these 3 metrics because it lacks conte
 
 **The rule:**
 
+Weighted average of the two scores, with 50% model and 50% style.
+
 **The numbers:**
+
+Model AI Score: 0.50
+Style AI Score: 0.50
 
 **Where it lives:** `scoring.py::combine_signals`
 
@@ -100,7 +105,11 @@ It can't see edge cases/noises in each of these 3 metrics because it lacks conte
 
 **A case where my two signals split, and what my rule does with it:**
 
+ If there is a difference of 30% or more between model and style score, use a adjusted weighted average of 80% model and 20% style.
 
+ Signal Split: Model Score - Style Score > 0.30
+Model AI Score: 0.80
+Style AI Score: 0.20
 
 ---
 
