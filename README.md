@@ -150,11 +150,11 @@ Simple and focus on the system not being able to make a determination.
 ```bash
 $ curl -X POST http://127.0.0.1:5000/submit \
   -H "Content-Type: application/json" \
-  -d '{"text": "...", "creator_id": "..."}'
+  -d '{"text": "A spirit who claims to be the ghost of Hamlet's father describes his murder at the hands of Claudius and demands that Hamlet avenge the killing. When the councilor Polonius learns from his daughter, Ophelia, that Hamlet has visited her in an apparently distracted state, Polonius attributes the prince's condition to lovesickness, and he sets a trap for Hamlet using Ophelia as bait.", "creator_id": "auther_123"}'
 ```
 
 ```json
-
+{"timestamp": "2026-11-04T07:54:42+00:00", "content_id": "85127ae7-3d5b-4632-80b3-89111c02f93c", "creator_id": "auther_123", "guess": "unsure", "model_score": 0.7081, "style_score": 0.44320357788806314, "combined_score": 0.5756517889440316, "label": "This text has mixed writing patterns and/or style common with AI-generated models and naturally written by a person.", "status": "accepted"}
 ```
 
 **An appeal**
@@ -162,11 +162,11 @@ $ curl -X POST http://127.0.0.1:5000/submit \
 ```bash
 $ curl -X POST http://127.0.0.1:5000/appeal \
   -H "Content-Type: application/json" \
-  -d '{"content_id": "...", "reasoning": "..."}'
+  -d '{"content_id": "85127ae7-3d5b-4632-80b3-89111c02f93c", "reasoning": "This is a synopsis for Hamlet"}'
 ```
 
 ```json
-
+{"timestamp": "2026-11-04T08:05:29+00:00", "content_id": "85127ae7-3d5b-4632-80b3-89111c02f93c", "creator_id": "auther_123", "event": "appeal", "status": "under_review", "reasoning": "This is a synopsis for Hamlet"}
 ```
 
 **What the log shows afterwards**
@@ -176,7 +176,41 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 ```
 
 ```json
-
+{
+  "count": 3,
+  "entries": [
+    {
+      "combined_score": 0.7232850638518923,
+      "content_id": "5991ef66-0236-4243-adc2-f8cf90fa093a",
+      "creator_id": "auther_123",
+      "guess": "ai",
+      "label": "This text has writing patterns common to AI-generated models.",
+      "model_score": 0.8014,
+      "status": "accepted",
+      "style_score": 0.4108253192594614,
+      "timestamp": "2026-11-04T07:54:35+00:00"
+    },
+    {
+      "combined_score": 0.5756517889440316,
+      "content_id": "85127ae7-3d5b-4632-80b3-89111c02f93c",
+      "creator_id": "auther_123",
+      "guess": "unsure",
+      "label": "This text has mixed writing patterns and/or style common with AI-generated models and naturally written by a person.",
+      "model_score": 0.7081,
+      "status": "accepted",
+      "style_score": 0.44320357788806314,
+      "timestamp": "2026-11-04T07:54:42+00:00"
+    },
+    {
+      "content_id": "85127ae7-3d5b-4632-80b3-89111c02f93c",
+      "creator_id": "auther_123",
+      "event": "appeal",
+      "reasoning": "This is a synopsis for Hamlet",
+      "status": "under_review",
+      "timestamp": "2026-11-04T08:05:29+00:00"
+    }
+  ]
+}
 ```
 
 ---
