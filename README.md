@@ -287,13 +287,16 @@ Unsure: This text has mixed writing patterns and/or style common with AI-generat
 
 ## Rate Limiting
 
-**My limits:** ___ per minute, ___ per day
+**My limits:** 5 per minute, 25 per day
 
 **Why those numbers and not others:**
 <!-- Think about two people: a real writer submitting their own work a few
      times an hour, and a script sending a thousand variations to map your
      thresholds. Your numbers have to be liveable for the first and hostile to
      the second. -->
+
+I choose 5/min because a real writer can submit the wrong file/text and maybe bad connections but more than that and it starts to look suspicious.
+Limit to 25/day (1 per hour in a day +1) for resubmissions if they made changes to their text.
 
 **What a caller counts as:** <!-- per address, or per creator_id? They fail
 differently — one script can look like a thousand callers, and one household
@@ -304,7 +307,12 @@ can look like one. -->
 <!-- python run_attacks.py --flood 15 -->
 
 ```
+============================================================
+200 200 200 200 200 429 429 429 429 429 429 429 429 429 429
+============================================================
 
+10 of 15 were rate limited. Paste the run above into your README
+under **Rate Limiting**, and check GET /log recorded the rejections.
 ```
 
 ---

@@ -154,7 +154,7 @@ def health():
 # ── YOU BUILD THIS ────────────────────────────────────────────────────────────
 
 @app.post("/submit")
-# @limiter.limit(f"{config.RATE_LIMIT_PER_MINUTE}/minute;{config.RATE_LIMIT_PER_DAY}/day")
+@limiter.limit(f"{config.RATE_LIMIT_PER_MINUTE}/minute;{config.RATE_LIMIT_PER_DAY}/day")
 def submit():
     """
     Take a piece of text, decide about it, log the decision, answer.
@@ -205,6 +205,11 @@ def submit():
     payload = request.get_json(silent=True) or {}
 
     if not isinstance(payload, dict):
+        audit.log_rejection(
+            creator_id=payload.get("creator_id", "unknown"),
+            reason="bad_request",
+            message="invalid JSON object"
+        )
         return jsonify({
             "error": "bad_request",
             "message": "Request body must be a valid JSON object."
@@ -213,22 +218,37 @@ def submit():
     content_id = str(uuid.uuid4())
     text = payload.get("text")
     creator_id = payload.get("creator_id")
-
-    if not isinstance(text, str) or not text.strip():
-        return jsonify({
-            "error": "bad_request",
-            "message": "Missing or empty 'text' field in request body."
-        }), 400
-
+    
     if not isinstance(creator_id, str) or not creator_id.strip():
+        audit.log_rejection(
+            creator_id="unknown",
+            reason="bad_request",
+            message="missing or empty 'creator_id' field"
+        )
         return jsonify({
             "error": "bad_request",
             "message": "Missing or empty 'creator_id' field in request body."
         }), 400
 
+    if not isinstance(text, str) or not text.strip():
+        audit.log_rejection(
+            creator_id=creator_id,
+            reason="bad_request",
+            message="missing or empty 'text' field"
+        )
+        return jsonify({
+            "error": "bad_request",
+            "message": "Missing or empty 'text' field in request body."
+        }), 400
+
     try:
         model_score = model_signal(text)
     except ValueError as e:
+        audit.log_rejection(
+            creator_id=creator_id,
+            reason="bad_request",
+            message=str(e)
+        )
         return jsonify({
             "error": "bad_request",
             "message": str(e)
@@ -282,6 +302,11 @@ def appeal():
     payload = request.get_json(silent=True) or {}
 
     if not isinstance(payload, dict):
+        audit.log_rejection(
+            creator_id="unknown",
+            reason="bad_request",
+            message="invalid JSON object"
+        )
         return jsonify({
             "error": "bad_request",
             "message": "Request body must be a valid JSON object."
@@ -291,12 +316,22 @@ def appeal():
     reasoning = payload.get("reasoning")
 
     if not isinstance(content_id, str) or not content_id.strip():
+        audit.log_rejection(
+            creator_id="unknown",
+            reason="bad_request",
+            message="missing or empty 'content_id' field"
+        )
         return jsonify({
             "error": "bad_request",
             "message": "Missing or empty 'content_id' field in request body."
         }), 400
 
     if not isinstance(reasoning, str) or not reasoning.strip():
+        audit.log_rejection(
+            creator_id="unknown",
+            reason="bad_request",
+            message="missing or empty 'reasoning' field"
+        )
         return jsonify({
             "error": "bad_request",
             "message": "Missing or empty 'reasoning' field in request body."
@@ -304,6 +339,11 @@ def appeal():
 
     existing_entries = audit.entries_for(content_id)
     if not existing_entries:
+        audit.log_rejection(
+            creator_id="unknown",
+            reason="bad_request",
+            message="content_id not found in audit log."
+        )
         return jsonify({
             "error": "bad_request",
             "message": f"content_id {content_id} not found in audit log."
