@@ -204,10 +204,36 @@ def submit():
     """
     payload = request.get_json(silent=True) or {}
 
+    if not isinstance(payload, dict):
+        return jsonify({
+            "error": "bad_request",
+            "message": "Request body must be a valid JSON object."
+        }), 400
+
     content_id = str(uuid.uuid4())
     text = payload.get("text")
     creator_id = payload.get("creator_id")
-    model_score = model_signal(text)
+
+    if not isinstance(text, str) or not text.strip():
+        return jsonify({
+            "error": "bad_request",
+            "message": "Missing or empty 'text' field in request body."
+        }), 400
+
+    if not isinstance(creator_id, str) or not creator_id.strip():
+        return jsonify({
+            "error": "bad_request",
+            "message": "Missing or empty 'creator_id' field in request body."
+        }), 400
+
+    try:
+        model_score = model_signal(text)
+    except ValueError as e:
+        return jsonify({
+            "error": "bad_request",
+            "message": str(e)
+        }), 400
+
     style_score = style_signal(text)
     combined_score = combine_signals(model_score, style_score)
     guess, label = score_to_label(combined_score)
@@ -230,7 +256,7 @@ def submit():
         "label": label,
         "model_score": model_score,
         "style_score": style_score
-    })
+    }), 200
 
 
 @app.post("/appeal")
@@ -255,20 +281,37 @@ def appeal():
     """
     payload = request.get_json(silent=True) or {}
 
+    if not isinstance(payload, dict):
+        return jsonify({
+            "error": "bad_request",
+            "message": "Request body must be a valid JSON object."
+        }), 400
+
     content_id = payload.get("content_id")
     reasoning = payload.get("reasoning")
+
+    if not isinstance(content_id, str) or not content_id.strip():
+        return jsonify({
+            "error": "bad_request",
+            "message": "Missing or empty 'content_id' field in request body."
+        }), 400
+
+    if not isinstance(reasoning, str) or not reasoning.strip():
+        return jsonify({
+            "error": "bad_request",
+            "message": "Missing or empty 'reasoning' field in request body."
+        }), 400
 
     existing_entries = audit.entries_for(content_id)
     if not existing_entries:
         return jsonify({
-            "error": "not_found",
-            "message": f"content_id {content_id} not found in audit log.",
-            "you_sent": payload,
-        }), 404
+            "error": "bad_request",
+            "message": f"content_id {content_id} not found in audit log."
+        }), 400
 
     creator_id = existing_entries[0].get("creator_id", "unknown")
 
-    appeal_entry = audit.log_appeal(
+    audit.log_appeal(
         content_id=content_id,
         creator_id=creator_id,
         reasoning=reasoning,
@@ -279,7 +322,7 @@ def appeal():
         "content_id": content_id,
         "status": "under_review",
         "message": "Your appeal has been recorded and is under review."
-    })
+    }), 200
 
 
 # ── Already works ─────────────────────────────────────────────────────────────

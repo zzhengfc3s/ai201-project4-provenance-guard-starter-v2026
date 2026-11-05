@@ -110,7 +110,7 @@ def punctuation_density(text: str) -> float:
     if not w_list:
         return 0
 
-    expressive_punc = re.findall(r"[!?;:-—]", text)
+    expressive_punc = re.findall(r"[-!?;:—]", text)
     return (len(expressive_punc) / len(w_list)) * 100
 
 

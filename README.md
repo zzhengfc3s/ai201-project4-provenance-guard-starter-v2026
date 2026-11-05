@@ -122,9 +122,9 @@ Style AI Score: 0.20
 
 | Label | Score range | The exact text a reader sees |
 |---|---|---|
-| high-confidence human | 0 - 0.35 | This text has writing patterns common to AI-generated models. |
+| high-confidence human | 0 - 0.35 | This text has distinct writing patterns written by a person. |
 | unsure | 0.35 - 0.65 | This text has mixed writing patterns and/or style common with AI-generated models and naturally written by a person. |
-| high-confidence AI | 0.65 - 1 | This text has distinct writing patterns written by a person. |
+| high-confidence AI | 0.65 - 1 | This text has writing patterns common to AI-generated models. |
 
 **Why I worded the "unsure" one this way:**
 <!-- It's the hardest of the three. It has to admit uncertainty without

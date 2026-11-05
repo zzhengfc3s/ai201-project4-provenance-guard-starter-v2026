@@ -56,9 +56,9 @@ def combine_signals(model_score: float, style_score: float) -> float:
     model_weight = config.WEIGHT_MODEL_SIGNAL
     style_weight = config.WEIGHT_STYLE_SIGNAL
 
-    if (model_score - style_score) > 0.3:
-        model_weight = 0.8
-        style_weight = 0.2
+    if (model_score - style_score) >= config.COMBINED_SCORE_SPLIT_THRESHOLD:
+        model_weight = config.WEIGHT_MODEL_SIGNAL_SPLIT
+        style_weight = config.WEIGHT_STYLE_SIGNAL_SPLIT
 
     return (
         model_weight * model_score
