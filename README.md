@@ -322,20 +322,86 @@ under **Rate Limiting**, and check GET /log recorded the rejections.
 <!-- Every attack with its outcome and a held-or-broke mark.
      `run_attacks.py --label before` produces the table. -->
 
-
+| ID | Family | Targeting | Status | Content ID | Guess | Score | Verdict |
+|---|---|---|---|---|---|---|---|
+| EV01 | evasion | signal two: typos raise word variety | 200 | `291ed82a-1cce-45e0-b742-7e3443b3c56a` | unsure | 0.372 | HELD |
+| EV02 | evasion | signal two: broken-up sentences raise length spread | 200 | `38f3996d-f3ab-4be2-87d0-66b283f744d9` | unsure | 0.501 | HELD |
+| EV03 | evasion | signal two: a pasted quotation changes the shape | 200 | `4f565fcf-69a4-472d-9168-71ab6de2afac` | unsure | 0.601 | HELD |
+| EV04 | evasion | signal one: unusual words raise perplexity | 200 | `9b675d14-1f77-45c6-b8af-7f54195c8957` | unsure | 0.554 | HELD |
+| EV05 | evasion | both signals: heavy human editing pass | 200 | `281133e1-3dbe-44df-b594-6b2168ae64de` | human | 0.277 | HELD |
+| EV06 | evasion | signal two: one very long sentence and one very short | 200 | `ec301b1f-086c-44aa-b453-6dfc6ba27a13` | unsure | 0.424 | HELD |
+| EV07 | evasion | signal two: padding with punctuation | 200 | `7686ff44-bf15-4027-956e-92bfd12e4340` | unsure | 0.577 | HELD |
+| EV08 | evasion | signal one: text below the token window | 200 | `5261c0a4-9bf7-41ef-96ec-6085d6acc3fb` | unsure | 0.402 | HELD |
+| EV09 | evasion | both: AI text with a human opening paragraph bolted on | 200 | `cef08a88-1431-4d19-82f7-15f957655935` | unsure | 0.578 | HELD |
+| EV10 | evasion | signal two: repeated stanza structure | 200 | `16c3c11b-8887-4c4a-9884-44aa05900396` | ai | 0.843 | HELD |
+| FP01 | false_positive | plain, clear human writing with no flourishes | 200 | `31960304-1576-42d0-a02a-26055c8382c3` | unsure | 0.588 | BROKE |
+| FP02 | false_positive | human writing in a formal register | 200 | `f8f2a3a0-0d99-4a16-bb6c-a7be27053929` | ai | 0.703 | BROKE |
+| FP03 | false_positive | a non-native English speaker writing carefully | 200 | `326d2267-ae38-4fe6-b3be-5dadbd4f70c3` | ai | 0.712 | BROKE |
+| FP04 | false_positive | a student essay written to a rubric | 200 | `626912b8-b5cb-4b35-a9b8-dfd5c9a0ea81` | ai | 0.703 | BROKE |
+| FP05 | false_positive | technical documentation written by a person | 200 | `af9e5bb8-c6b1-419e-8b74-7336fd7de4e9` | ai | 0.743 | BROKE |
+| FP06 | false_positive | a person imitating a formal template | 200 | `992bfab2-cd02-4862-85a1-371f806ff43f` | ai | 0.809 | BROKE |
+| FP07 | false_positive | human writing that repeats a phrase deliberately | 200 | `36eddab8-c441-4eef-9496-b2ba6d3c7e57` | ai | 0.805 | BROKE |
+| FP08 | false_positive | very short genuine human submission | 200 | `3984e4e9-2137-4d80-ab0b-657ef4fd7443` | unsure | 0.403 | HELD |
+| PI01 | prompt_injection | instruction to ignore the check | 200 | `bb187395-3c0a-4d64-bafe-842422939e26` | unsure | 0.426 | HELD |
+| PI02 | prompt_injection | instruction disguised as a system message | 200 | `2822614e-16f5-47e7-af83-a87fca5cfb5e` | human | 0.222 | HELD |
+| PI03 | prompt_injection | instruction wrapped in the writer's voice | 200 | `cfd4b9c6-afec-4985-a298-d4552fc66e97` | unsure | 0.514 | HELD |
+| PI04 | prompt_injection | attempt to make the label text hostile | 200 | `635c7610-2e7f-4f59-884a-1b7334f81157` | unsure | 0.521 | HELD |
+| PI05 | prompt_injection | attempt to inject into the audit log | 200 | `92d01b26-9e5e-4fd1-93e7-1241c7c6d125` | unsure | 0.567 | HELD |
+| PI06 | prompt_injection | instruction plus real human text | 200 | `6b676fc5-bfc6-4dea-a2a1-1ce11b2f12fd` | unsure | 0.562 | HELD |
+| MF01 | malformed | text is only whitespace | 400 | `—` | — | — | HELD |
+| MF02 | malformed | text is a single character | 400 | `—` | — | — | HELD |
+| MF03 | malformed | text is control characters | 200 | `6f55fca7-52fe-4b70-858a-db5052143d1d` | human | 0.350 | BROKE |
+| MF04 | malformed | text is only punctuation | 200 | `070793f7-c39a-4aa7-8b98-06de2c335201` | unsure | 0.506 | BROKE |
+| MF05 | malformed | text is a very long single word | 200 | `d9cffff0-b8b9-450c-a6c0-29b804d8725f` | ai | 0.849 | BROKE |
+| MF06 | malformed | text is emoji only | 200 | `1685fee7-aa42-402b-944c-3511695d575a` | ai | 0.998 | BROKE |
+| MF07 | malformed | text is right-to-left script | 200 | `1cb4eb52-2d1c-44e4-bf81-722d11048373` | ai | 0.953 | BROKE |
+| MF08 | malformed | text is 60,000 characters | 200 | `42728a31-19c3-458b-88c9-786a6233f9fe` | ai | 0.886 | BROKE |
+| RQ01 | malformed | no text field at all | 400 | `—` | — | — | HELD |
+| RQ02 | malformed | no creator_id | 400 | `—` | — | — | HELD |
+| RQ03 | malformed | text is a number | 400 | `—` | — | — | HELD |
+| RQ04 | malformed | text is a list | 400 | `—` | — | — | HELD |
+| RQ05 | malformed | text is null | 400 | `—` | — | — | HELD |
+| RQ06 | malformed | creator_id is an object | 400 | `—` | — | — | HELD |
+| RQ07 | malformed | body is a JSON array, not an object | 500 | `—` | — | — | BROKE |
+| RQ08 | malformed | body is unparseable JSON | 400 | `—` | — | — | HELD |
+| RQ09 | malformed | body is empty | 400 | `—` | — | — | HELD |
+| RQ10 | malformed | body is form-encoded, not JSON | 429 | `—` | — | — | BROKE |
+| RQ11 | malformed | body is JSON claiming to be plain text | 429 | `—` | — | — | BROKE |
+| RQ12 | malformed | deeply nested JSON | 400 | `—` | — | — | HELD |
+| FL01_01 | flood_same_creator | 20 rapid submissions from one creator | 200 | `66eae6fd-fdd0-4153-9518-244247daf1a0` | unsure | 0.364 | HELD |
+| FL01_02 | flood_same_creator | 20 rapid submissions from one creator | 200 | `6b1e0b29-f95b-4e23-b911-8bac5c4b9ee1` | unsure | 0.364 | HELD |
+| FL01_03 | flood_same_creator | 20 rapid submissions from one creator | 200 | `378bf0a8-0eb4-4324-8cc3-2b2439dba144` | unsure | 0.364 | HELD |
+| FL01_04 | flood_same_creator | 20 rapid submissions from one creator | 200 | `42b1a693-7fc5-45cf-82a2-6326c8dd1d42` | unsure | 0.364 | HELD |
+| FL01_05 | flood_same_creator | 20 rapid submissions from one creator | 200 | `329e4365-a79b-4411-b1cb-ff0c900ab8f6` | unsure | 0.364 | HELD |
+| FL01_06 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_07 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_08 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_09 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_10 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_11 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_12 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
 
 **Ten audit log entries from the run**
 
 <!-- Choose entries that show the interesting failures, not the ten easiest. -->
 
 ```json
-
+{"timestamp": "2026-11-08T05:02:30+00:00", "content_id": "31960304-1576-42d0-a02a-26055c8382c3", "creator_id": "attacker_FP01", "guess": "unsure", "model_score": 0.6175, "style_score": 0.5586265072068279, "combined_score": 0.588063253603414, "label": "This text has mixed writing patterns and/or style common with AI-generated models and naturally written by a person.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:30+00:00", "content_id": "f8f2a3a0-0d99-4a16-bb6c-a7be27053929", "creator_id": "attacker_FP02", "guess": "ai", "model_score": 0.7387, "style_score": 0.6666674670278925, "combined_score": 0.7026837335139462, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:30+00:00", "content_id": "326d2267-ae38-4fe6-b3be-5dadbd4f70c3", "creator_id": "attacker_FP03", "guess": "ai", "model_score": 0.8051, "style_score": 0.6190380907002864, "combined_score": 0.7120690453501433, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:30+00:00", "content_id": "36eddab8-c441-4eef-9496-b2ba6d3c7e57", "creator_id": "attacker_FP07", "guess": "ai", "model_score": 0.8816, "style_score": 0.4972554860869334, "combined_score": 0.8047310972173868, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:31+00:00", "content_id": "d9cffff0-b8b9-450c-a6c0-29b804d8725f", "creator_id": "attacker_MF05", "guess": "ai", "model_score": 0.9976, "style_score": 0.7, "combined_score": 0.8488, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:31+00:00", "content_id": "1685fee7-aa42-402b-944c-3511695d575a", "creator_id": "attacker_MF06", "guess": "ai", "model_score": 0.9969, "style_score": 1.0, "combined_score": 0.9984500000000001, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:31+00:00", "content_id": "1cb4eb52-2d1c-44e4-bf81-722d11048373", "creator_id": "attacker_MF07", "guess": "ai", "model_score": 0.9064, "style_score": 1.0, "combined_score": 0.9532, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+{"timestamp": "2026-11-08T05:02:32+00:00", "content_id": "42728a31-19c3-458b-88c9-786a6233f9fe", "creator_id": "attacker_MF08", "guess": "ai", "model_score": 0.9876, "style_score": 0.7839673688335569, "combined_score": 0.8857836844167785, "label": "This text has writing patterns common to AI-generated models.", "status": "accepted"}
+RQ07 - no audit log
+RQ10 - {"timestamp": "2026-11-08T05:02:32+00:00", "creator_id": "unknown", "event": "rejected", "status": "rejected", "reason": "rate_limited", "limit": "5 per 1 minute"}
 ```
 
 **The single worst outcome** — the one I'd least want to explain to a writer
 whose work got caught by it:
 
-
+I would say the worst outcome is the FP01; plain, clear human writing with no flourishes. My scoring came back as unsure with a score of 0.588. I'm guessing this should be the baseline for a human writing, and it's not passing as human so my thresholds is bad and it will affect a majority of the submissions, and potentially marking them all as unsure.
 
 ---
 
