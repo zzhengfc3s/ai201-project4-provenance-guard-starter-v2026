@@ -302,6 +302,8 @@ Limit to 25/day (1 per hour in a day +1) for resubmissions if they made changes 
 differently — one script can look like a thousand callers, and one household
 can look like one. -->
 
+per creator_id
+
 **The run of status codes when I pushed past it:**
 
 <!-- python run_attacks.py --flood 15 -->
@@ -805,14 +807,17 @@ Doesn't help the functionality of the provenance guard but fixed criteria 4 lang
 <!-- For each attack still getting through and each criterion still missed:
      what you'd do, and why you stopped. -->
 
+I stopped because I ran out of time.
 
+False Postive: FP01-07, I would need to adjust signal two thresholds, then run attack/eval test, then if needed adjust then combining rule and run attack/eval tests again
+Malformed: RQ10-RQ11, bad input got rate limited, I would add IP address to rate limit so bad inputs are bundled together under "unknown" creator_id
 
 **The trade I'd make if this ran for real:**
 
 <!-- Two sentences. Fewer wrong accusations means more AI text getting through.
      Say which way you'd go and WHO PAYS FOR IT. -->
 
-
+I would lend more towards fewer wrong accusations because AI is part of everday life now and more and more AI usage is common. I think heavily modified AI text or human written and AI-improved is fine since they are doing the work, just improved the work via a tool.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
