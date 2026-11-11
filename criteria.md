@@ -74,11 +74,13 @@ At least once for each label to ensure that all labels can be reached otherwise 
 
 ## 4.
 
-All appeal must be 100% recorded.
+Original: All appeal must be 100% recorded.
+Revised: All appeals with valid inputs must be 100% recorded.
 
 **Why this target:**
 
-There should be no reason any appeal is not recorded. This is a deterministric path check.
+Original: There should be no reason any appeal is not recorded. This is a deterministric path check.
+Revised: There should be no reason any valid appeal is not recorded. This is a deterministric path check. Criteria 5 checks for bad inputs already.
 
 ---
 

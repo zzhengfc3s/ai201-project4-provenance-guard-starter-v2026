@@ -47,6 +47,11 @@ DETECTOR_MODEL = os.getenv("AI201_DETECTOR_MODEL", "gpt2")
 DETECTOR_MAX_TOKENS = 400
 
 
+# Max length of text to accept. The service will reject anything longer than this.
+# 10,000 characters is a reasonable limit for most use cases.
+MAX_TEXT_LENGTH = 10000
+
+
 # ─── Scoring (Milestone 4) ───────────────────────────────────────────────────
 # How much each signal counts toward the combined score.
 #

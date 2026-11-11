@@ -24,6 +24,7 @@ Routes:
     GET  /health      is the service up, and is the model loaded
 """
 
+import re
 import uuid
 
 from flask import Flask, jsonify, request
@@ -153,6 +154,51 @@ def health():
 
 # ── YOU BUILD THIS ────────────────────────────────────────────────────────────
 
+# Helper function to validate text
+def validate_submission_text(text: str) -> tuple[bool, str]:
+    """
+    Returns:
+        (is_valid: bool, error_message: str)
+    """
+    if not isinstance(text, str) or not text.strip():
+        return False, "Text is missing or empty."
+    
+    if len(text) > config.MAX_TEXT_LENGTH:
+        return False, f"Text exceeds maximum length of {config.MAX_TEXT_LENGTH} characters."
+    
+    if re.search(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', text):
+        return False, "Text contains invalid control characters."
+    
+    words = re.findall(r'[a-zA-Z0-9]+', text)
+    
+    if not words:
+        return False, "Text must contain words."
+    
+    latin_chars = len(re.findall(r'[a-zA-Z]', text))
+    total_chars = len(text)
+    if latin_chars / max(total_chars, 1) < 0.30:
+        return False, "Text must be written primarily in plain English."
+
+    max_word_len = max(len(w) for w in words)
+    if max_word_len > 100:
+        return False, "Text contains excessively long unspaced strings."
+
+    return True, ""
+
+# Helper function to validate content_id as a valid UUID4
+def validate_content_id(content_id: str) -> tuple[bool, str]:
+    """
+    Returns:
+        (is_valid: bool, error_message: str)
+    """
+    if not isinstance(content_id, str) or not content_id.strip():
+        return False, "Content ID is missing or empty."
+    try:
+        val = uuid.UUID(content_id, version=4)
+        return str(val) == content_id.lower(), ""
+    except ValueError:
+        return False, "Content ID is not a valid UUID4."
+
 @app.post("/submit")
 @limiter.limit(f"{config.RATE_LIMIT_PER_MINUTE}/minute;{config.RATE_LIMIT_PER_DAY}/day")
 def submit():
@@ -206,7 +252,7 @@ def submit():
 
     if not isinstance(payload, dict):
         audit.log_rejection(
-            creator_id=payload.get("creator_id", "unknown"),
+            creator_id="unknown",
             reason="bad_request",
             message="invalid JSON object"
         )
@@ -216,29 +262,31 @@ def submit():
         }), 400
 
     content_id = str(uuid.uuid4())
-    text = payload.get("text")
+
     creator_id = payload.get("creator_id")
-    
-    if not isinstance(creator_id, str) or not creator_id.strip():
+    is_valid, error_message = validate_submission_text(creator_id)
+    if not is_valid:
         audit.log_rejection(
             creator_id="unknown",
             reason="bad_request",
-            message="missing or empty 'creator_id' field"
+            message="Creator ID: " + error_message
         )
         return jsonify({
             "error": "bad_request",
-            "message": "Missing or empty 'creator_id' field in request body."
+            "message": "Creator ID: " + error_message
         }), 400
 
-    if not isinstance(text, str) or not text.strip():
+    text = payload.get("text")
+    is_valid, error_message = validate_submission_text(text)
+    if not is_valid:
         audit.log_rejection(
             creator_id=creator_id,
             reason="bad_request",
-            message="missing or empty 'text' field"
+            message="Text: " + error_message
         )
         return jsonify({
             "error": "bad_request",
-            "message": "Missing or empty 'text' field in request body."
+            "message": "Text: " + error_message
         }), 400
 
     try:
@@ -313,28 +361,16 @@ def appeal():
         }), 400
 
     content_id = payload.get("content_id")
-    reasoning = payload.get("reasoning")
-
-    if not isinstance(content_id, str) or not content_id.strip():
+    is_valid, error_message = validate_content_id(content_id)
+    if not is_valid:
         audit.log_rejection(
             creator_id="unknown",
             reason="bad_request",
-            message="missing or empty 'content_id' field"
+            message="Content ID: " + error_message
         )
         return jsonify({
             "error": "bad_request",
-            "message": "Missing or empty 'content_id' field in request body."
-        }), 400
-
-    if not isinstance(reasoning, str) or not reasoning.strip():
-        audit.log_rejection(
-            creator_id="unknown",
-            reason="bad_request",
-            message="missing or empty 'reasoning' field"
-        )
-        return jsonify({
-            "error": "bad_request",
-            "message": "Missing or empty 'reasoning' field in request body."
+            "message": "Content ID: " + error_message
         }), 400
 
     existing_entries = audit.entries_for(content_id)
@@ -350,6 +386,19 @@ def appeal():
         }), 400
 
     creator_id = existing_entries[0].get("creator_id", "unknown")
+    
+    reasoning = payload.get("reasoning")
+    is_valid, error_message = validate_submission_text(reasoning)
+    if not is_valid:
+        audit.log_rejection(
+            creator_id=creator_id,
+            reason="bad_request",
+            message="Reasoning: " + error_message
+        )
+        return jsonify({
+            "error": "bad_request",
+            "message": "Reasoning: " + error_message
+        }), 400
 
     audit.log_appeal(
         content_id=content_id,

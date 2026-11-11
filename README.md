@@ -664,10 +664,12 @@ Criteria 5 Trial 1:
 
 Criteria 4: I wrote missed because I used missing reasoning for run 2 and missing content_id for run 3. This is a broken criterion, Stage: N/A, Mechanism: N/A. New Criterion 4 is: All appeal with valid input must be 100% recorded.
 
-Criteria 5: I wrote missed because I did not have checks for huge words edge case as the bad input. Stage: the route, Mechanism: no checks for huge words/text.
+Criteria 5: I wrote missed because I did not have checks for huge words and non-plain english edge case as the bad input. Stage: the route, Mechanism: no checks for huge words/text and non-plain english texts.
+Broken Attacks: MF03-08, RQ07
 
 Criteria 1: I wrote met because technically it fulfilled the criteria as "unsure" is not the same as "ai" label. However 8/10 were labelled "unsure" when they should be "human", my signal thresholds needs to be adjusted. Signal two had 7/10 submissions above ~0.7, Signal one has 4/10 submissions above 0.35.
-Stage: Signal two, Mechanism: Signal two's individual score calculations is tilted towards AI most of the time and maybe its weights threshold needs to be adjusted.
+Stage: Signal two, Mechanism: Signal two's individual score calculations is tilted towards AI most of the time and maybe its weights threshold needs to be adjusted. 
+Broken Attacks: FP01-FP07
 
 ---
 
@@ -675,20 +677,126 @@ Stage: Signal two, Mechanism: Signal two's individual score calculations is tilt
 
 **What I changed:**
 
+Added more valid input checks and moved it to helper function.
+
 **Which diagnosis pointed at it:**
+
+Criteria 5: Bad Input validation checks
 
 ### Attack Run — After
 
 <!-- Same format. `run_attacks.py --label after` -->
+- Produced by: `run_attacks.py::main`
+- Service: `app.py::submit`
+- 56 attacks · 2026-11-11 02:12
+- Auto-marked BROKE (5xx, crash, no response): **0**
+- Left for you to judge: **56**
+
+| ID | Family | Targeting | Status | Content ID | Guess | Score | Verdict |
+|---|---|---|---|---|---|---|---|
+| EV01 | evasion | signal two: typos raise word variety | 200 | `e14806f0-bd52-4a2a-9e86-de7ed068c07f` | unsure | 0.372 | HELD |
+| EV02 | evasion | signal two: broken-up sentences raise length spread | 200 | `29805144-af51-4097-a4be-10283af59686` | unsure | 0.501 | HELD |
+| EV03 | evasion | signal two: a pasted quotation changes the shape | 200 | `7e732d26-f35e-4726-83e2-7115dba4ac28` | unsure | 0.601 | HELD |
+| EV04 | evasion | signal one: unusual words raise perplexity | 200 | `c17f50f5-340e-4da5-973e-1127fa785230` | unsure | 0.554 | HELD |
+| EV05 | evasion | both signals: heavy human editing pass | 200 | `93affdae-efd9-4ec4-817c-32c875341905` | human | 0.277 | HELD |
+| EV06 | evasion | signal two: one very long sentence and one very short | 200 | `e7140123-6840-4b05-9e08-482c95618668` | unsure | 0.424 | HELD |
+| EV07 | evasion | signal two: padding with punctuation | 200 | `1da8ed3a-356d-4efe-90ee-b38cd1a7ebe5` | unsure | 0.577 | HELD |
+| EV08 | evasion | signal one: text below the token window | 200 | `26f1b844-eba6-4016-8e24-31f57e2e56b5` | unsure | 0.402 | HELD |
+| EV09 | evasion | both: AI text with a human opening paragraph bolted on | 200 | `4c58ab32-484b-431e-9d94-e4aef308ffc7` | unsure | 0.578 | HELD |
+| EV10 | evasion | signal two: repeated stanza structure | 200 | `14aea645-a8dd-4199-81a1-08c4c8bac46e` | ai | 0.843 | HELD |
+| FP01 | false_positive | plain, clear human writing with no flourishes | 200 | `ba04827b-3c0b-4179-9c3d-5836005fb162` | unsure | 0.588 | BROKE |
+| FP02 | false_positive | human writing in a formal register | 200 | `7f4af379-c46b-41d6-968f-d09239dee0f9` | ai | 0.703 | BROKE |
+| FP03 | false_positive | a non-native English speaker writing carefully | 200 | `793ec748-a9fc-4d78-910b-6aa175bd1d22` | ai | 0.712 | BROKE |
+| FP04 | false_positive | a student essay written to a rubric | 200 | `838b094b-8b9f-4650-9906-0f9c2ac2e393` | ai | 0.703 | BROKE |
+| FP05 | false_positive | technical documentation written by a person | 200 | `424f2a94-9d0c-4ebf-a999-abdabf753b72` | ai | 0.743 | BROKE |
+| FP06 | false_positive | a person imitating a formal template | 200 | `1526d08e-fcc3-40ad-ad61-c54340ef0395` | ai | 0.809 | BROKE |
+| FP07 | false_positive | human writing that repeats a phrase deliberately | 200 | `a1226b22-f266-40d2-a738-87cf544715b5` | ai | 0.805 | BROKE |
+| FP08 | false_positive | very short genuine human submission | 200 | `4ed3691b-4dfc-4c9a-a79b-356a77966e20` | unsure | 0.403 | HELD |
+| PI01 | prompt_injection | instruction to ignore the check | 200 | `05b8f259-c686-4c13-99f4-455c7631d275` | unsure | 0.426 | HELD |
+| PI02 | prompt_injection | instruction disguised as a system message | 200 | `2fd663ba-bfdf-4039-9c5e-16b17bbb2651` | human | 0.222 | HELD |
+| PI03 | prompt_injection | instruction wrapped in the writer's voice | 200 | `f0bc0736-a846-4886-95f6-029cd4248c09` | unsure | 0.514 | HELD |
+| PI04 | prompt_injection | attempt to make the label text hostile | 200 | `99468ad3-2171-4236-9eaa-ae2b75233cc6` | unsure | 0.521 | HELD |
+| PI05 | prompt_injection | attempt to inject into the audit log | 200 | `976c118b-db14-4ae4-aa94-33ebfbaee93d` | unsure | 0.567 | HELD |
+| PI06 | prompt_injection | instruction plus real human text | 200 | `df502af6-e0e6-4219-9f47-fe1ac3238741` | unsure | 0.562 | HELD |
+| MF01 | malformed | text is only whitespace | 400 | `—` | — | — | HELD |
+| MF02 | malformed | text is a single character | 400 | `—` | — | — | HELD |
+| MF03 | malformed | text is control characters | 400 | `—` | — | — | HELD |
+| MF04 | malformed | text is only punctuation | 400 | `—` | — | — | HELD |
+| MF05 | malformed | text is a very long single word | 400 | `—` | — | — | HELD |
+| MF06 | malformed | text is emoji only | 400 | `—` | — | — | HELD |
+| MF07 | malformed | text is right-to-left script | 400 | `—` | — | — | HELD |
+| MF08 | malformed | text is 60,000 characters | 400 | `—` | — | — | HELD |
+| RQ01 | malformed | no text field at all | 400 | `—` | — | — | HELD |
+| RQ02 | malformed | no creator_id | 400 | `—` | — | — | HELD |
+| RQ03 | malformed | text is a number | 400 | `—` | — | — | HELD |
+| RQ04 | malformed | text is a list | 400 | `—` | — | — | HELD |
+| RQ05 | malformed | text is null | 400 | `—` | — | — | HELD |
+| RQ06 | malformed | creator_id is an object | 400 | `—` | — | — | HELD |
+| RQ07 | malformed | body is a JSON array, not an object | 400 | `—` | — | — | HELD |
+| RQ08 | malformed | body is unparseable JSON | 400 | `—` | — | — | HELD |
+| RQ09 | malformed | body is empty | 400 | `—` | — | — | HELD |
+| RQ10 | malformed | body is form-encoded, not JSON | 429 | `—` | — | — | BROKE |
+| RQ11 | malformed | body is JSON claiming to be plain text | 429 | `—` | — | — | BROKE |
+| RQ12 | malformed | deeply nested JSON | 400 | `—` | — | — | HELD |
+| FL01_01 | flood_same_creator | 20 rapid submissions from one creator | 200 | `a30e860d-621d-4fd2-922d-dda266ca58f2` | unsure | 0.364 | HELD |
+| FL01_02 | flood_same_creator | 20 rapid submissions from one creator | 200 | `01d84faf-2a8c-405b-b1d3-8278678e3568` | unsure | 0.364 | HELD |
+| FL01_03 | flood_same_creator | 20 rapid submissions from one creator | 200 | `1baae1ec-08eb-40cb-a997-43cac607d056` | unsure | 0.364 | HELD |
+| FL01_04 | flood_same_creator | 20 rapid submissions from one creator | 200 | `a75ef137-f385-4fcc-9f14-ece6f4cd9a60` | unsure | 0.364 | HELD |
+| FL01_05 | flood_same_creator | 20 rapid submissions from one creator | 200 | `fa2bb68b-f008-402c-8468-95e740d48147` | unsure | 0.364 | HELD |
+| FL01_06 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_07 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_08 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_09 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_10 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_11 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
+| FL01_12 | flood_same_creator | 20 rapid submissions from one creator | 429 | `—` | — | — | HELD |
 
 
+- Produced by: `run_eval.py::main`
+- Service: `app.py::submit` · scoring: `scoring.py::combine_signals`
+- 3 trials per criterion · 2026-11-11 02:13
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Given 10 human written text submission, at most 2 submission can be falsely labelled AI. | 2/10 | 0/10 | 0/10 | 0/10 | MET |
+| 2. The combine score difference between AI and human have a gap of at least 0.30. | 0.30 | 0.43 | 0.43 | 0.43 | MET |
+| 3. All three labels: AI, Human, Unsure, must be reachable at least once. | 3/3 | 3/3 | 3/3 | 3/3 | MET |
+| 4. All appeal must be 100% recorded. | 1/1 | 1/1 | 0/1 | 0/1 | MISSED |
+| 5. A bad input, such as missing text or creator_id, should 100% return an error response. | 4/4 | 4/4 | 4/4 | 4/4 | MET |
 
 **Did it help, and how do I know:**
 
 <!-- Widening the unsure band usually fixes one problem and creates another.
      Reporting that trade honestly is worth full credit. -->
 
+Yes, Held against attacks that previously broke, MF03-08 and RQ07. Criteria 5 eval also passed 4/4.
 
+## The Improvement 2
+
+**What I changed:**
+
+Revised Criterion 4 and changed appeal test to only valid inputs. see audit.jsonl (last 3 appeals)
+
+**Which diagnosis pointed at it:**
+
+Broken Criterion 4
+
+### Attack Run — After
+- Produced by: `run_eval.py::main`
+- Service: `app.py::submit` · scoring: `scoring.py::combine_signals`
+- 3 trials per criterion · 2026-11-11 02:13
+
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Given 10 human written text submission, at most 2 submission can be falsely labelled AI. | 2/10 | 0/10 | 0/10 | 0/10 | MET |
+| 2. The combine score difference between AI and human have a gap of at least 0.30. | 0.30 | 0.43 | 0.43 | 0.43 | MET |
+| 3. All three labels: AI, Human, Unsure, must be reachable at least once. | 3/3 | 3/3 | 3/3 | 3/3 | MET |
+| 4. All appeal must be 100% recorded. | 1/1 | 1/1 | 1/1 | 1/1 | MET |
+| 5. A bad input, such as missing text or creator_id, should 100% return an error response. | 4/4 | 4/4 | 4/4 | 4/4 | MET |
+
+**Did it help, and how do I know:**
+
+Doesn't help the functionality of the provenance guard but fixed criteria 4 language.
 
 ---
 
