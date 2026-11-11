@@ -662,7 +662,12 @@ Criteria 5 Trial 1:
 
      Look for a pattern. Five failures on one signal is one problem, not five. -->
 
+Criteria 4: I wrote missed because I used missing reasoning for run 2 and missing content_id for run 3. This is a broken criterion, Stage: N/A, Mechanism: N/A. New Criterion 4 is: All appeal with valid input must be 100% recorded.
 
+Criteria 5: I wrote missed because I did not have checks for huge words edge case as the bad input. Stage: the route, Mechanism: no checks for huge words/text.
+
+Criteria 1: I wrote met because technically it fulfilled the criteria as "unsure" is not the same as "ai" label. However 8/10 were labelled "unsure" when they should be "human", my signal thresholds needs to be adjusted. Signal two had 7/10 submissions above ~0.7, Signal one has 4/10 submissions above 0.35.
+Stage: Signal two, Mechanism: Signal two's individual score calculations is tilted towards AI most of the time and maybe its weights threshold needs to be adjusted.
 
 ---
 
